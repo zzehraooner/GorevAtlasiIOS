@@ -13,8 +13,9 @@ struct GorevAtlasi2App: App {
 
     var body: some Scene {
         WindowGroup {
-            BoardView()
+           RegisterView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }
+

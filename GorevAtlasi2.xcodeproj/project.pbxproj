@@ -7,10 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		631A8C112BE66807000276F4 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631A8C102BE66807000276F4 /* LoginView.swift */; };
+		631A8C132BE66865000276F4 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631A8C122BE66865000276F4 /* RegisterView.swift */; };
 		6327B6CE2BC28CFF0017CA33 /* Board+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6327B6CD2BC28CFF0017CA33 /* Board+Stub.swift */; };
-		637104B52BDAF18500789028 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 637104B42BDAF18500789028 /* SwiftUIIntrospect */; };
-		637104B72BDAF18500789028 /* SwiftUIIntrospect-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 637104B62BDAF18500789028 /* SwiftUIIntrospect-Dynamic */; };
-		637104B92BDAF18500789028 /* SwiftUIIntrospect-Static in Frameworks */ = {isa = PBXBuildFile; productRef = 637104B82BDAF18500789028 /* SwiftUIIntrospect-Static */; };
 		6387B81D2BC29400001ADD59 /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6387B81C2BC29400001ADD59 /* BoardView.swift */; };
 		6387B81F2BC29796001ADD59 /* BoardListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6387B81E2BC29796001ADD59 /* BoardListView.swift */; };
 		6387B8212BC2A24C001ADD59 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6387B8202BC2A24C001ADD59 /* CardView.swift */; };
@@ -29,6 +28,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		631A8C102BE66807000276F4 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		631A8C122BE66865000276F4 /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		6327B6CC2BC28C740017CA33 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6327B6CD2BC28CFF0017CA33 /* Board+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Board+Stub.swift"; sourceTree = "<group>"; };
 		6387B81C2BC29400001ADD59 /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
@@ -54,9 +55,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				637104B52BDAF18500789028 /* SwiftUIIntrospect in Frameworks */,
-				637104B72BDAF18500789028 /* SwiftUIIntrospect-Dynamic in Frameworks */,
-				637104B92BDAF18500789028 /* SwiftUIIntrospect-Static in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,6 +68,8 @@
 				6387B81E2BC29796001ADD59 /* BoardListView.swift */,
 				6387B8202BC2A24C001ADD59 /* CardView.swift */,
 				63BCF2412BDAEB9B00EB0ECD /* View+AlertTextField.swift */,
+				631A8C102BE66807000276F4 /* LoginView.swift */,
+				631A8C122BE66865000276F4 /* RegisterView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -144,9 +144,6 @@
 			);
 			name = GorevAtlasi2;
 			packageProductDependencies = (
-				637104B42BDAF18500789028 /* SwiftUIIntrospect */,
-				637104B62BDAF18500789028 /* SwiftUIIntrospect-Dynamic */,
-				637104B82BDAF18500789028 /* SwiftUIIntrospect-Static */,
 			);
 			productName = GorevAtlasi2;
 			productReference = 63CC57E12BBC315F0028A0B6 /* GorevAtlasi2.app */;
@@ -208,6 +205,7 @@
 				63CC57F12BBC31600028A0B6 /* GorevAtlasi2.xcdatamodeld in Sources */,
 				6387B81F2BC29796001ADD59 /* BoardListView.swift in Sources */,
 				63CC57EE2BBC31600028A0B6 /* Persistence.swift in Sources */,
+				631A8C112BE66807000276F4 /* LoginView.swift in Sources */,
 				639368A32BBEFA6100E52B46 /* BoardList.swift in Sources */,
 				63BCF2462BDAEC4E00EB0ECD /* BoardDropDelegate.swift in Sources */,
 				63CC57F92BBC31D20028A0B6 /* Card.swift in Sources */,
@@ -217,6 +215,7 @@
 				6387B81D2BC29400001ADD59 /* BoardView.swift in Sources */,
 				63BCF2442BDAEC2F00EB0ECD /* BoardDiskReposity.swift in Sources */,
 				63CC57E72BBC315F0028A0B6 /* ContentView.swift in Sources */,
+				631A8C132BE66865000276F4 /* RegisterView.swift in Sources */,
 				6387B8212BC2A24C001ADD59 /* CardView.swift in Sources */,
 				63CC57E52BBC315F0028A0B6 /* GorevAtlasi2App.swift in Sources */,
 			);
@@ -437,24 +436,6 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		637104B42BDAF18500789028 /* SwiftUIIntrospect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 637104B32BDAF18500789028 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = SwiftUIIntrospect;
-		};
-		637104B62BDAF18500789028 /* SwiftUIIntrospect-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 637104B32BDAF18500789028 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = "SwiftUIIntrospect-Dynamic";
-		};
-		637104B82BDAF18500789028 /* SwiftUIIntrospect-Static */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 637104B32BDAF18500789028 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = "SwiftUIIntrospect-Static";
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		63CC57EF2BBC31600028A0B6 /* GorevAtlasi2.xcdatamodeld */ = {

@@ -14,35 +14,49 @@ struct BoardView: View {
     
     @StateObject private var board: Board = BoardDiskRepository().loadFromDisk() ?? Board.stub
     @State private var dragging: BoardList?
+    @State private var scrollToId: UUID? = nil
     
     var body: some View {
         NavigationView {
             ScrollView(.horizontal) {
-                LazyHStack(alignment: .top, spacing: 24) {
-                    ForEach(board.lists) { boardList in
-                        BoardListView(board: board, boardList: boardList)
-                            .onDrag({
-                                self.dragging = boardList
-                                return NSItemProvider(object: boardList)
-                            })
-                            .onDrop(of: [Card.typeIdentifier, BoardList.typeIdentifier], delegate: BoardDropDelegate(board: board, boardList: boardList, lists: $board.lists, current: $dragging))
+                ScrollViewReader { proxy in
+                    HStack(spacing: 0) {
+                        ForEach(board.lists) { boardList in
+                            BoardListView(board: board, boardList: boardList)
+                                .id(boardList.id)
+                                .onDrag({
+                                    self.dragging = boardList
+                                    return NSItemProvider(object: boardList)
+                                })
+                                .onDrop(of: [Card.typeIdentifier, BoardList.typeIdentifier], delegate: BoardDropDelegate(board: board, boardList: boardList, lists: $board.lists, current: $dragging))
+                                .frame(width: 300)
+                                .background(boardListBackgroundColor)
+                                .cornerRadius(8)
+                                .padding(.trailing, 8)
+                                .onAppear {
+                                    if boardList.id == scrollToId {
+                                        withAnimation {
+                                            proxy.scrollTo(boardList.id, anchor: .leading)
+                                        }
+                                        scrollToId = nil
+                                    }
+                                }
+                        }
+                        
+                        Button("+ Liste Ekle") {
+                            handleOnAddList(proxy: proxy)
+                        }
+                        .padding()
+                        .frame(width: 300)
+                        .background(boardListBackgroundColor.opacity(0.8))
+                        .cornerRadius(8)
+                        .foregroundColor(.black)
                     }
-                    
-                    Button("+ Liste Ekle") {
-                        handleOnAddList()
-                    }
-                    .frame(maxWidth: .infinity)
                     .padding()
-                    .background(boardListBackgroundColor.opacity(0.8))
-                    .frame(width: 300)
-                    .cornerRadius(8)
-                    .foregroundColor(.black)
                 }
-                .padding()
-                .animation(.default, value: board.lists)
             }
-//            .background(trelloBlueBackgroundColor)
-            .background(Image("image").resizable().scaledToFill())
+            .animation(.default, value: board.lists)
+            .background(trelloBlueBackgroundColor)
             .edgesIgnoringSafeArea(.bottom)
             .navigationTitle(board.name)
             .navigationBarTitleDisplayMode(.inline)
@@ -58,12 +72,15 @@ struct BoardView: View {
         }
     }
     
-    private func handleOnAddList() {
+    private func handleOnAddList(proxy: ScrollViewProxy) {
         presentAlertTextField(title: "Liste Ekle") { text in
             guard let text = text, !text.isEmpty else {
                 return
             }
             board.addNewBoardListWithName(text)
+            DispatchQueue.main.async {
+                scrollToId = board.lists.last?.id
+            }
         }
     }
     
@@ -81,6 +98,5 @@ struct BoardView: View {
 struct BoardView_Previews: PreviewProvider {
     static var previews: some View {
         BoardView()
-            .previewInterfaceOrientation(.landscapeLeft)
     }
 }

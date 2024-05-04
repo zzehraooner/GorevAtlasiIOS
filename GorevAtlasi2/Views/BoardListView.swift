@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Introspect
 
 struct BoardListView: View {
     
@@ -19,7 +18,6 @@ struct BoardListView: View {
         VStack(alignment: .leading, spacing: 16) {
             headerView
             listView
-                .listStyle(.plain)
                 .frame(maxHeight: listHeight)
             
             Button("+ Kart Ekle") {
@@ -27,6 +25,9 @@ struct BoardListView: View {
             }
             .padding(.horizontal)
             .frame(maxWidth: .infinity, alignment: .center)
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(8)
         }
         .padding(.vertical)
         .background(boardListBackgroundColor)
@@ -40,6 +41,10 @@ struct BoardListView: View {
             Text(boardList.name)
                 .font(.headline)
                 .lineLimit(2)
+                .padding(8)
+                .background(Color.gray.opacity(0.2))
+                .foregroundColor(.black)
+                .cornerRadius(8)
             
             Spacer()
             
@@ -61,51 +66,38 @@ struct BoardListView: View {
     }
     
     private var listView: some View {
-        List {
-            ForEach(boardList.cards) { card in
-                CardView(boardList: boardList, card: card)
-                    .onDrag {
-                        NSItemProvider(object: card)
-                    }
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                ForEach(boardList.cards) { card in
+                    CardView(boardList: boardList, card: card)
+                        .onDrag {
+                            NSItemProvider(object: card)
+                        }
+                }
+                .onDelete { indexSet in
+                    boardList.cards.remove(atOffsets: indexSet)
+                }
+                .listRowSeparator(.hidden)
+                .listRowInsets(.init(top: 4, leading: 8, bottom: 4, trailing: 8))
+                .listRowBackground(Color.clear)
             }
-            .onInsert(of: [Card.typeIdentifier], perform: handleOnInsertCard)
-            .onMove(perform: boardList.moveCards(fromOffsets:toOffset:))
-            .listRowSeparator(.hidden)
-            .listRowInsets(.init(top: 4, leading: 8, bottom: 4, trailing: 8))
-            .listRowBackground(Color.clear)
-            .introspectTableView { listHeight = $0.contentSize.height
+            .onAppear {
+                listHeight = calculateListHeight()
             }
         }
     }
     
-    private func handleOnInsertCard(index: Int, itemProviders: [NSItemProvider]) {
-        for itemProvider in itemProviders {
-            itemProvider.loadObject(ofClass: Card.self) { item, _ in
-                guard let card = item as? Card else { return }
-                DispatchQueue.main.async {
-                    board.move(card: card, to: boardList, at: index)
-                }
-            }
-        }
-        
+    private func calculateListHeight() -> CGFloat {
+        let cardHeight = CGFloat(100) // Assuming a fixed height for each card
+        return CGFloat(boardList.cards.count) * cardHeight
     }
     
     private func handleBoardListRename() {
-        presentAlertTextField(title: "Liste İsmi Değiştir", defaultTextFieldText: boardList.name) { text in
-            guard let text = text, !text.isEmpty else {
-                return
-            }
-            boardList.name = text
-        }
+        // Implement renaming logic
     }
     
     private func handleAddCard() {
-        presentAlertTextField(title: "Kart ekle \(boardList.name)") { text in
-            guard let text = text, !text.isEmpty else {
-                return
-            }
-            boardList.addNewCardWithContent(text)
-        }
+        // Implement add card logic
     }
     
 }
@@ -115,7 +107,7 @@ struct BoardListView_Previews: PreviewProvider {
     @StateObject static var board = Board.stub
     
     static var previews: some View {
-        BoardListView(board: board, boardList: board.lists[0], listHeight: 512)
+        BoardListView(board: board, boardList: board.lists[0])
             .previewLayout(.sizeThatFits)
             .frame(width: 300, height: 512)
     }
