@@ -4,61 +4,63 @@
 //
 //  Created by Zehra Öner on 25.04.2024.
 //
-
 import Foundation
 import SwiftUI
 
-struct BoardDropDelegate: DropDelegate {
+struct BoardDropHandler: DropDelegate {
     
     let board: Board
-    let boardList: BoardList
+    let targetList: BoardList
     
     @Binding var lists: [BoardList]
-    @Binding var current: BoardList?
+    @Binding var activeList: BoardList?
     
-    private func boardListItemProviders(info: DropInfo) -> [NSItemProvider] {
-        info.itemProviders(for: [BoardList.typeIdentifier])
+    private func getItemProviders(for typeIdentifier: String, in info: DropInfo) -> [NSItemProvider] {
+        info.itemProviders(for: [typeIdentifier])
     }
     
-    private func cardItemProviders(info: DropInfo) -> [NSItemProvider] {
-        info.itemProviders(for: [Card.typeIdentifier])
+    private func getBoardListProviders(in info: DropInfo) -> [NSItemProvider] {
+        getItemProviders(for: BoardList.typeIdentifier, in: info)
+    }
+    
+    private func getCardProviders(in info: DropInfo) -> [NSItemProvider] {
+        getItemProviders(for: Card.typeIdentifier, in: info)
     }
     
     func dropEntered(info: DropInfo) {
         guard
-            !boardListItemProviders(info: info).isEmpty,
-            let current = current,
-            boardList != current,
-            let fromIndex = lists.firstIndex(of: current),
-            let toIndex = lists.firstIndex(of: boardList) else {
+            !getBoardListProviders(in: info).isEmpty,
+            let activeList = activeList,
+            targetList != activeList,
+            let fromIndex = lists.firstIndex(of: activeList),
+            let toIndex = lists.firstIndex(of: targetList) else {
                 return
             }
         lists.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex)
-        
     }
     
     func dropUpdated(info: DropInfo) -> DropProposal? {
-        if !cardItemProviders(info: info).isEmpty {
+        if !getCardProviders(in: info).isEmpty {
             return DropProposal(operation: .copy)
-        } else if !boardListItemProviders(info: info).isEmpty {
+        } else if !getBoardListProviders(in: info).isEmpty {
             return DropProposal(operation: .move)
         }
         return nil
     }
     
     func performDrop(info: DropInfo) -> Bool {
-        let cardItemProviders = cardItemProviders(info: info)
-        for cardItemProvider in cardItemProviders {
-            cardItemProvider.loadObject(ofClass: Card.self) { item, _ in
+        let cardProviders = getCardProviders(in: info)
+        for cardProvider in cardProviders {
+            cardProvider.loadObject(ofClass: Card.self) { item, _ in
                 guard let card = item as? Card,
-                      card.boardListId != boardList.id
+                      card.boardListId != targetList.id
                 else { return }
                 DispatchQueue.main.async {
-                    board.move(card: card, to: boardList, at: 0)
+                    board.move(card: card, to: targetList, at: 0)
                 }
             }
         }
-        self.current = nil
+        self.activeList = nil
         return true
     }
 }
