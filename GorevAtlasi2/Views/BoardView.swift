@@ -1,10 +1,3 @@
-//
-//  BoardView.swift
-//  GorevAtlasi2
-//
-//  Created by Zehra Öner on 7.04.2024.
-//
-
 import SwiftUI
 
 let boardListBackgroundColor = Color(uiColor: UIColor(red: 0.92, green: 0.92, blue: 0.94, alpha: 1))
@@ -12,7 +5,7 @@ let trelloBlueBackgroundColor = Color(uiColor: UIColor(red: 0.2, green: 0.47, bl
 
 struct BoardView: View {
     
-    @StateObject private var board: Board = BoardDiskRepository().loadFromDisk() ?? Board.stub
+    @StateObject private var board = Board.stub
     @State private var dragging: BoardList?
     @State private var scrollToId: UUID? = nil
     
@@ -24,10 +17,10 @@ struct BoardView: View {
                         ForEach(board.lists) { boardList in
                             BoardListView(board: board, boardList: boardList)
                                 .id(boardList.id)
-                                .onDrag({
+                                .onDrag {
                                     self.dragging = boardList
                                     return NSItemProvider(object: boardList)
-                                })
+                                }
                                 .onDrop(of: [Card.typeIdentifier, BoardList.typeIdentifier], delegate: BoardDropDelegate(board: board, boardList: boardList, lists: $board.lists, current: $dragging))
                                 .frame(width: 300)
                                 .background(boardListBackgroundColor)
@@ -67,6 +60,11 @@ struct BoardView: View {
             }
         }
         .navigationViewStyle(.stack)
+        .onAppear {
+            if let loadedBoard = BoardDiskRepository().loadFromDisk() {
+                board = loadedBoard
+            }
+        }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
             BoardDiskRepository().saveToDisk(board: board)
         }
@@ -92,7 +90,6 @@ struct BoardView: View {
             board.name = text
         }
     }
-    
 }
 
 struct BoardView_Previews: PreviewProvider {
