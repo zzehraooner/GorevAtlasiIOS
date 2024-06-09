@@ -1,12 +1,6 @@
-//
-//  BoardList.swift
-//  GorevAtlasi2
-//
-//  Created by Zehra Öner on 4.04.2024.
-//
-
 import Foundation
 
+// BoardList class conforms to NSObject, ObservableObject, Identifiable, and Codable protocols
 class BoardList: NSObject, ObservableObject, Identifiable, Codable {
     
     private(set) var id = UUID()
@@ -16,7 +10,7 @@ class BoardList: NSObject, ObservableObject, Identifiable, Codable {
     @Published var cards: [Card]
     
     enum CodingKeys: String, CodingKey {
-        case id, boardId, name, cards
+        case id, boardID = "boardId", name, cards
     }
     
     init(name: String, cards: [Card] = [], boardID: UUID) {
@@ -29,7 +23,7 @@ class BoardList: NSObject, ObservableObject, Identifiable, Codable {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(UUID.self, forKey: .id)
-        self.boardID = try container.decode(UUID.self, forKey: .boardId)
+        self.boardID = try container.decode(UUID.self, forKey: .boardID)
         self.name = try container.decode(String.self, forKey: .name)
         self.cards = try container.decode([Card].self, forKey: .cards)
         super.init()
@@ -38,13 +32,13 @@ class BoardList: NSObject, ObservableObject, Identifiable, Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
-        try container.encode(boardID, forKey: .boardId)
+        try container.encode(boardID, forKey: .boardID)
         try container.encode(name, forKey: .name)
         try container.encode(cards, forKey: .cards)
     }
-    
 }
 
+// NSItemProviderWriting conformance
 extension BoardList: NSItemProviderWriting {
     
     static let typeIdentifier = "com.zehraoner.GorevAtlasi2.BoardList"
@@ -64,25 +58,25 @@ extension BoardList: NSItemProviderWriting {
         return nil
     }
     
-    func cardIndex(id: UUID) -> Int? {
+    func cardIndex(for id: UUID) -> Int? {
         cards.firstIndex { $0.id == id }
     }
     
-    func addNewCardWithContent(_ content: String) {
+    func addCard(withContent content: String) {
         cards.append(Card(content: content, boardListId: id))
     }
     
     func removeCard(_ card: Card) {
-        guard let cardIndex = cardIndex(id: card.id) else { return }
+        guard let cardIndex = cardIndex(for: card.id) else { return }
         cards.remove(at: cardIndex)
     }
     
     func moveCards(fromOffsets offsets: IndexSet, toOffset offset: Int) {
         cards.move(fromOffsets: offsets, toOffset: offset)
     }
-    
 }
 
+// NSItemProviderReading conformance
 extension BoardList: NSItemProviderReading {
     
     static var readableTypeIdentifiersForItemProvider: [String] {
@@ -92,5 +86,4 @@ extension BoardList: NSItemProviderReading {
     static func object(withItemProviderData data: Data, typeIdentifier: String) throws -> Self {
         try JSONDecoder().decode(Self.self, from: data)
     }
-    
 }
